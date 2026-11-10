@@ -32,17 +32,14 @@
       @media (min-width: 500px) {
         .stage { box-shadow: 0 0 0 1px #2c2c2e, 0 0 60px rgba(0,0,0,.8); }
       }
-      /* フルスクリーン / スタンドアローン起動時：枠を消して画面いっぱいにし、
-         本物の着信画面と二重になるのを防ぐため、ページ内のステータスバーは隠す
-         （実機のステータスバーがそのまま本物として見える） */
+      /* フルスクリーン / スタンドアローン起動時：枠を消して画面いっぱいにする。
+         ページ内に偽のステータスバーは置かない（実機のステータスバーがそのまま見える） */
       @media (display-mode: fullscreen), (display-mode: standalone) {
         .stage { max-width: none; box-shadow: none; }
-        .statusbar { display: none; }
         .caller-head { margin-top: calc(5dvh + env(safe-area-inset-top)); }
         .incall-name { margin-top: calc(4dvh + env(safe-area-inset-top)); }
       }
       body.fs-active .stage { max-width: none; box-shadow: none; }
-      body.fs-active .statusbar { display: none; }
       body.fs-active .caller-head { margin-top: calc(5dvh + env(safe-area-inset-top)); }
       body.fs-active .incall-name { margin-top: calc(4dvh + env(safe-area-inset-top)); }
       .screen {
@@ -230,13 +227,7 @@
       }
       .call-bg .bg-shade { position: absolute; inset: 0; background: rgba(10,10,14,.38); }
       .call-bg > *:not(.bg-photo):not(.bg-shade) { position: relative; z-index: 2; }
-      .statusbar {
-        display: flex; justify-content: space-between; align-items: center;
-        padding: calc(12px + env(safe-area-inset-top)) 26px 0;
-        font-size: 15px; font-weight: 600;
-      }
-      .statusbar .sicons { display: flex; align-items: center; gap: 6px; }
-      .caller-head { text-align: center; margin-top: 7dvh; padding: 0 20px; }
+      .caller-head { text-align: center; margin-top: calc(5dvh + env(safe-area-inset-top)); padding: 0 20px; }
       .caller-photo {
         width: 104px; height: 104px; border-radius: 50%;
         margin: 0 auto 14px; overflow: hidden;
@@ -315,7 +306,7 @@
       .sheet .sheet-cancel { background: rgba(245,245,247,.98); border-radius: 14px; font-weight: 700; }
 
       /* ---------- 通話中 ---------- */
-      .incall-name { font-size: 30px; font-weight: 600; text-align: center; margin-top: 6dvh; padding: 0 20px; word-break: break-all; }
+      .incall-name { font-size: 30px; font-weight: 600; text-align: center; margin-top: calc(4dvh + env(safe-area-inset-top)); padding: 0 20px; word-break: break-all; }
       .incall-timer { text-align: center; font-size: 17px; color: rgba(255,255,255,.85); margin-top: 6px; font-variant-numeric: tabular-nums; }
       .incall-grid {
         margin-top: auto;
