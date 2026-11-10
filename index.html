@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#000000" />
+    <!-- PWA / ホーム画面追加でフルスクリーン起動するための設定 -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="着信" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png" />
+    <title>フェイク着信アプリ</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div class="stage">
+
+      <!-- ===== セットアップ ===== -->
+      <section id="scr-setup" class="screen active">
+        <h1>フェイク着信</h1>
+        <p class="lead">誰から・どんなセリフで・何秒後に鳴らすかを選んでセットすると、画面が真っ黒になります。時間になったら本物そっくりの着信画面が出て、応答すると相手の声が流れます。</p>
+
+        <div class="group-label">誰からかかってくる？</div>
+        <div class="card" id="caller-list">
+          <button class="row caller-row selected" data-caller="miruku">
+            <span class="avatar a-miruku"><img src="images/miruku.jpg" alt="ミルク" /></span>
+            <span class="texts"><span class="name">ミルク</span><div class="desc">写真付き表示で一番かわいいやつ</div></span>
+            <svg class="check" viewBox="0 0 24 24" fill="none"><path d="M4 12.5l5 5L20 6.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="row caller-row" data-caller="yui">
+            <span class="avatar a-yui">ゆ</span>
+            <span class="texts"><span class="name">ゆい（友だち）</span><div class="desc">脱出用の電話はこの名前が自然</div></span>
+            <svg class="check" viewBox="0 0 24 24" fill="none"><path d="M4 12.5l5 5L20 6.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="row caller-row" data-caller="tanaka">
+            <span class="avatar a-tanaka">田</span>
+            <span class="texts"><span class="name">田中さん（取引先）</span><div class="desc">仕事っぽい緊急連絡に</div></span>
+            <svg class="check" viewBox="0 0 24 24" fill="none"><path d="M4 12.5l5 5L20 6.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="row caller-row" data-caller="custom">
+            <span class="avatar a-custom" id="custom-avatar-preview">？</span>
+            <span class="texts"><span class="name">カスタム</span><div class="desc">名前と写真を自由に設定</div></span>
+            <svg class="check" viewBox="0 0 24 24" fill="none"><path d="M4 12.5l5 5L20 6.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="sub-panel" id="custom-caller-fields" hidden>
+            <label for="custom-name">表示する名前</label>
+            <input type="text" id="custom-name" placeholder="例：ママ、上司、○○銀行" maxlength="20" />
+            <label class="photo-btn" for="custom-photo">写真を選ぶ（任意）</label>
+            <input type="file" id="custom-photo" accept="image/*" hidden />
+            <p class="hint">写真はこの画面を開いている間だけ使われます。保存はされません。</p>
+          </div>
+        </div>
+
+        <div class="group-label">電話に出たら何て言う？</div>
+        <div class="card" id="script-list">
+          <button class="row script-row" data-script="a">
+            <span class="texts"><span class="name">A. 脱出用・緊急呼び出し</span><div class="desc">「今すぐ戻ってこられる？」飲み会や長話から抜け出す用（女性の声）</div></span>
+            <span class="preview-btn" data-preview="a">試聴</span>
+            <svg class="check" viewBox="0 0 24 24" fill="none"><path d="M4 12.5l5 5L20 6.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="row script-row selected" data-script="b">
+            <span class="texts"><span class="name">B. ミルクおしゃべり</span><div class="desc">ミルク本人の声で「聞いて聞いて！」ドッキリ・ネタ用</div></span>
+            <span class="preview-btn" data-preview="b">試聴</span>
+            <svg class="check" viewBox="0 0 24 24" fill="none"><path d="M4 12.5l5 5L20 6.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="row script-row" data-script="c">
+            <span class="texts"><span class="name">C. 仕事っぽい緊急連絡</span><div class="desc">「本日中にご判断いただきたいと…」取引先風（男性の声）</div></span>
+            <span class="preview-btn" data-preview="c">試聴</span>
+            <svg class="check" viewBox="0 0 24 24" fill="none"><path d="M4 12.5l5 5L20 6.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="row script-row" data-script="d">
+            <span class="texts"><span class="name">D. カスタム文章</span><div class="desc">自分で書いた文章を読み上げ（1行ごとに間が空きます）</div></span>
+            <svg class="check" viewBox="0 0 24 24" fill="none"><path d="M4 12.5l5 5L20 6.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="sub-panel" id="custom-text-wrap" hidden>
+            <label for="custom-text">読み上げる文章（1行＝ひと声）</label>
+            <textarea id="custom-text" placeholder="もしもし、今いい？&#10;実はお願いがあってさ。&#10;うん、そうそう。その件なんだけど…">もしもし、今いい？
+実はお願いがあってさ。
+うん、そうそう。その件なんだけど、今日中に連絡ほしいな。</textarea>
+            <p class="hint">行と行のあいだに約2.5秒の間が空くので、その間に相槌を打つと本物の通話に見えます。声はこの端末の読み上げ機能を使います。</p>
+          </div>
+          <button class="row script-row" data-script="e">
+            <span class="texts"><span class="name">E. 自分の声を録音</span><div class="desc">自分の声でセリフを吹き込んで、そのまま再生</div></span>
+            <svg class="check" viewBox="0 0 24 24" fill="none"><path d="M4 12.5l5 5L20 6.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="sub-panel" id="record-wrap" hidden>
+            <div class="rec-row">
+              <button class="rec-btn" id="rec-btn"><span class="rec-dot"></span><span id="rec-btn-label">録音する</span></button>
+              <span class="rec-status" id="rec-status">まだ録音していません</span>
+              <button class="play-rec-btn" id="play-rec-btn" hidden>▶ 録音を聞く</button>
+            </div>
+            <p class="hint">録音データはこの画面を開いている間だけ保持され、どこにも送信・保存されません。途中で間を空けて録ると、相槌のタイミングが作れます。</p>
+          </div>
+        </div>
+
+        <div class="group-label">何秒後に鳴らす？</div>
+        <div class="chip-row" id="delay-chips">
+          <button class="chip selected" data-delay="3">今すぐ</button>
+          <button class="chip" data-delay="10">10秒後</button>
+          <button class="chip" data-delay="30">30秒後</button>
+          <button class="chip" data-delay="60">1分後</button>
+          <button class="chip" data-delay="300">5分後</button>
+        </div>
+
+        <div class="group-label">フルスクリーンで使う（バレ対策）</div>
+        <div class="card install-card" id="install-card">
+          <div id="install-guide">
+            <div class="install-title"><img class="app-ico" src="icons/icon-192.png" alt="" />ホーム画面に追加すると全画面になる</div>
+            <p class="install-desc">ブラウザで開いている間は、上下にメニューやバーが出てしまいます。ホーム画面に追加して、できたアイコンから開くとバーが一切出ないフルスクリーンで起動します。</p>
+            <ol class="install-steps" id="install-steps-ios" hidden>
+              <li>画面下の<b>共有ボタン</b><span class="share-glyph"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7.5 6.5L12 2l4.5 4.5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg></span>をタップ</li>
+              <li>メニューの<b>「ホーム画面に追加」</b>を選ぶ</li>
+              <li>ホーム画面にできた<b>緑の電話アイコン</b>から開く（次からはこれが正解）</li>
+            </ol>
+            <ol class="install-steps" id="install-steps-android" hidden>
+              <li>ブラウザの<b>メニュー（︙）</b>を開く</li>
+              <li><b>「アプリをインストール」</b>または<b>「ホーム画面に追加」</b>を選ぶ</li>
+              <li>ホーム画面にできた<b>緑の電話アイコン</b>から開く（次からはこれが正解）</li>
+            </ol>
+            <ol class="install-steps" id="install-steps-other" hidden>
+              <li>ブラウザの<b>共有／メニュー</b>を開く</li>
+              <li><b>「ホーム画面に追加」</b>または<b>「アプリをインストール」</b>を選ぶ</li>
+              <li>ホーム画面にできた<b>緑の電話アイコン</b>から開く（次からはこれが正解）</li>
+            </ol>
+            <button class="install-btn" id="btn-install" hidden>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7.5 11L12 15.5L16.5 11"/><path d="M4 19h16"/></svg>
+              アプリとしてインストール
+            </button>
+          </div>
+          <div class="install-done" id="install-done" hidden>
+            <span class="done-dot"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M4 12.5l5 5L20 6.5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span>フルスクリーンで起動中です。このままセットすれば、バーなしで着信画面が出ます。</span>
+          </div>
+        </div>
+
+        <button class="cta" id="btn-set">着信をセットする</button>
+        <p class="foot">セット中は画面が真っ黒になります（タップでキャンセル）。<br />着信中は「あとで」「メッセージ」からも切れます。音量を上げておくのがおすすめです。<br />ブラウザで開いている場合は、「セットする」を押したタイミングでも全画面表示を試みます。</p>
+        <div class="toast" id="toast"></div>
+      </section>
+
+      <!-- ===== 待機（真っ黒） ===== -->
+      <section id="scr-standby" class="screen">
+        <div class="standby-hint"><b>セット中…</b><br />このまま置いておいてOK<br />タップでキャンセル</div>
+      </section>
+
+      <!-- ===== 着信中 ===== -->
+      <section id="scr-incoming" class="screen call-bg">
+        <div class="bg-photo" id="in-bg"></div>
+        <div class="bg-shade"></div>
+        <div class="statusbar">
+          <span class="sb-time">9:41</span>
+          <span class="sicons">
+            <svg width="17" height="11" viewBox="0 0 17 11" fill="#fff"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="6" rx="1"/><rect x="9" y="2.5" width="3" height="8.5" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1"/></svg>
+            <svg width="16" height="11" viewBox="0 0 16 12" fill="#fff"><path d="M8 10.6a1.7 1.7 0 1 1 0 .01zM8 7.4c1.1 0 2.2.45 3 1.24L9.9 9.75A2.75 2.75 0 0 0 8 9.15c-.72 0-1.4.22-1.95.6L4.94 8.64A4.36 4.36 0 0 1 8 7.4zM8 4.1c1.9 0 3.7.74 5.05 2.08l-1.1 1.11A5.6 5.6 0 0 0 8 5.75c-1.5 0-2.93.57-4 1.54L2.9 6.18A7.15 7.15 0 0 1 8 4.1z"/></svg>
+            <svg width="25" height="12" viewBox="0 0 25 12"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" fill="none" stroke="rgba(255,255,255,.4)"/><rect x="2" y="2" width="15" height="8" rx="2" fill="#fff"/><path d="M23.5 4v4a2.2 2.2 0 0 0 0-4z" fill="rgba(255,255,255,.4)"/></svg>
+          </span>
+        </div>
+        <div class="caller-head">
+          <div class="caller-photo ring-pulse" id="in-photo"></div>
+          <div class="caller-name" id="in-name">ミルク</div>
+          <div class="caller-sub">モバイル</div>
+        </div>
+        <div class="incoming-spacer"></div>
+        <div class="incoming-actions">
+          <button class="ia-btn" id="btn-remind">
+            <span class="ia-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="13" r="7.5"/><path d="M12 9.5V13l2.5 2M9 3.5L6.5 5.5M15 3.5l2.5 2"/></svg></span>
+            あとで
+          </button>
+          <button class="ia-btn" id="btn-message">
+            <span class="ia-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="#fff"><path d="M12 4C6.5 4 2 7.6 2 12.1c0 2.5 1.4 4.7 3.6 6.1-.1 1-.5 2.3-1.4 3.3 0 0 2.9-.2 4.9-1.4.9.25 1.9.38 2.9.38 5.5 0 10-3.6 10-8.1S17.5 4 12 4z"/></svg></span>
+            メッセージ
+          </button>
+        </div>
+        <div class="slide-wrap">
+          <div class="slide-track" id="slide-track">
+            <div class="slide-label" id="slide-label">スライドで応答</div>
+            <div class="slide-knob" id="slide-knob" role="button" aria-label="応答する">
+              <svg viewBox="0 0 24 24" fill="#30d158"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24 11.4 11.4 0 0 0 2.57.4 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.85 21 3 13.15 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 .86.14 1.72.4 2.57a1 1 0 0 1-.25 1.02l-2.03 2.2z"/></svg>
+            </div>
+          </div>
+        </div>
+        <div class="sheet-veil" id="sheet-veil" hidden></div>
+        <div class="sheet" id="sheet" hidden>
+          <div class="sheet-card">
+            <div class="sheet-title" id="sheet-title"></div>
+            <div id="sheet-options"></div>
+          </div>
+          <button class="sheet-cancel" id="sheet-cancel">キャンセル</button>
+        </div>
+      </section>
+
+      <!-- ===== 通話中 ===== -->
+      <section id="scr-incall" class="screen call-bg">
+        <div class="bg-photo" id="call-bg"></div>
+        <div class="bg-shade"></div>
+        <div class="statusbar">
+          <span class="sb-time">9:41</span>
+          <span class="sicons">
+            <svg width="17" height="11" viewBox="0 0 17 11" fill="#fff"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="6" rx="1"/><rect x="9" y="2.5" width="3" height="8.5" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1"/></svg>
+            <svg width="16" height="11" viewBox="0 0 16 12" fill="#fff"><path d="M8 10.6a1.7 1.7 0 1 1 0 .01zM8 7.4c1.1 0 2.2.45 3 1.24L9.9 9.75A2.75 2.75 0 0 0 8 9.15c-.72 0-1.4.22-1.95.6L4.94 8.64A4.36 4.36 0 0 1 8 7.4zM8 4.1c1.9 0 3.7.74 5.05 2.08l-1.1 1.11A5.6 5.6 0 0 0 8 5.75c-1.5 0-2.93.57-4 1.54L2.9 6.18A7.15 7.15 0 0 1 8 4.1z"/></svg>
+            <svg width="25" height="12" viewBox="0 0 25 12"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" fill="none" stroke="rgba(255,255,255,.4)"/><rect x="2" y="2" width="15" height="8" rx="2" fill="#fff"/><path d="M23.5 4v4a2.2 2.2 0 0 0 0-4z" fill="rgba(255,255,255,.4)"/></svg>
+          </span>
+        </div>
+        <div class="incall-name" id="call-name">ミルク</div>
+        <div class="incall-timer" id="call-timer">00:00</div>
+
+        <div class="incall-grid" id="incall-grid">
+          <button class="ctl-btn" id="ctl-mute">
+            <span class="ctl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 3a3 3 0 0 1 3 3v5a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3z" fill="currentColor" stroke="none"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M4 4l16 16" class="mute-slash" style="display:none"/></svg></span>
+            ミュート
+          </button>
+          <button class="ctl-btn" id="ctl-keypad">
+            <span class="ctl-icon"><svg viewBox="0 0 24 24" fill="currentColor"><g><circle cx="6" cy="6" r="1.9"/><circle cx="12" cy="6" r="1.9"/><circle cx="18" cy="6" r="1.9"/><circle cx="6" cy="12" r="1.9"/><circle cx="12" cy="12" r="1.9"/><circle cx="18" cy="12" r="1.9"/><circle cx="6" cy="18" r="1.9"/><circle cx="12" cy="18" r="1.9"/><circle cx="18" cy="18" r="1.9"/></g></svg></span>
+            キーパッド
+          </button>
+          <button class="ctl-btn" id="ctl-speaker">
+            <span class="ctl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5H4z" fill="currentColor" stroke="none"/><path d="M15.5 9.5a3.6 3.6 0 0 1 0 5M18 7a7 7 0 0 1 0 10"/></svg></span>
+            スピーカー
+          </button>
+          <button class="ctl-btn" id="ctl-facetime">
+            <span class="ctl-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h9A1.5 1.5 0 0 1 15 7.5v9A1.5 1.5 0 0 1 13.5 18h-9A1.5 1.5 0 0 1 3 16.5v-9z"/><path d="M15 10.7l5-2.9v8.4l-5-2.9v-2.6z"/></svg></span>
+            FaceTime
+          </button>
+          <button class="ctl-btn" id="ctl-contacts">
+            <span class="ctl-icon"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8.6" r="3.8"/><path d="M4.5 19.6c.8-3.3 3.9-5.1 7.5-5.1s6.7 1.8 7.5 5.1c.1.5-.3.9-.8.9H5.3c-.5 0-.9-.4-.8-.9z"/></svg></span>
+            連絡先
+          </button>
+          <button class="ctl-btn" id="ctl-add">
+            <span class="ctl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+            通話を追加
+          </button>
+        </div>
+
+        <div class="keypad-view" id="keypad-view">
+          <div class="keypad-display" id="keypad-display"></div>
+          <div class="keypad-grid" id="keypad-grid"></div>
+          <button class="keypad-hide" id="keypad-hide">非表示</button>
+        </div>
+
+        <div class="end-wrap">
+          <button class="end-btn" id="btn-end" aria-label="通話を終了">
+            <svg viewBox="0 0 24 24" fill="#fff"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24 11.4 11.4 0 0 0 2.57.4 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.85 21 3 13.15 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 .86.14 1.72.4 2.57a1 1 0 0 1-.25 1.02l-2.03 2.2z"/></svg>
+          </button>
+        </div>
+      </section>
+
+      <!-- ===== 終了 ===== -->
+      <section id="scr-ended" class="screen">
+        <div class="end-title">通話終了</div>
+        <div class="end-dur" id="end-dur"></div>
+      </section>
+    </div>
+
+    <audio id="ringtone" src="audio/ringtone.wav" loop preload="auto"></audio>
+    <audio id="voice" preload="auto"></audio>
+    <audio id="recplay" preload="auto"></audio>
+
+    <script src="js/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,44 @@
+{
+  "background_color": "#000000",
+  "description": "本物そっくりの着信画面と通話画面を表示するフェイク着信アプリ",
+  "dir": "ltr",
+  "display": "fullscreen",
+  "display_override": [
+    "fullscreen",
+    "standalone",
+    "minimal-ui"
+  ],
+  "icons": [
+    {
+      "purpose": "any",
+      "sizes": "192x192",
+      "src": "icons/icon-192.png",
+      "type": "image/png"
+    },
+    {
+      "purpose": "any",
+      "sizes": "512x512",
+      "src": "icons/icon-512.png",
+      "type": "image/png"
+    },
+    {
+      "purpose": "maskable",
+      "sizes": "512x512",
+      "src": "icons/icon-512.png",
+      "type": "image/png"
+    },
+    {
+      "purpose": "any",
+      "sizes": "180x180",
+      "src": "icons/apple-touch-icon.png",
+      "type": "image/png"
+    }
+  ],
+  "lang": "ja",
+  "name": "フェイク着信",
+  "orientation": "portrait",
+  "scope": "./",
+  "short_name": "着信",
+  "start_url": "./index.html",
+  "theme_color": "#000000"
+}
